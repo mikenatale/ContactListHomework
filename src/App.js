@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
+
+import Paper from 'material-ui/Paper';
+import RaisedButton from 'material-ui/RaisedButton';
 import {
     Table,
     TableBody,
@@ -8,7 +11,6 @@ import {
     TableRow,
     TableRowColumn,
 } from 'material-ui/Table';
-import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 
 const _LOCAL_STORAGE_ITEM_NAME = 'ContactListData';
@@ -18,9 +20,11 @@ class App extends Component {
         super();
 
         this.state = {
-            data: []
+            data: [],
+            tempData: []
         };
 
+        this.addContact = this.addContact.bind(this);
         this.renderTableRows = this.renderTableRows.bind(this);
         this.updateTableRow = this.updateTableRow.bind(this);
         this.saveData = this.saveData.bind(this);
@@ -36,7 +40,8 @@ class App extends Component {
         }
 
         scope.setState({
-            data: JSON.parse(data)
+            data: JSON.parse(data),
+            tempData: JSON.parse(data)
         });
     }
 
@@ -44,14 +49,26 @@ class App extends Component {
         const rowNumber = parseInt(e.target.id.split("_")[0], 10);
         const field = e.target.id.split("_")[1];
 
-        let data = this.state.data;
-        data[rowNumber][field] = e.target.value;
+        let tempData = this.state.data;
+        tempData[rowNumber][field] = e.target.value;
 
-        this.saveData(data);
+        this.setState({ tempData });
     }
 
-    saveData(data) {
+    saveData() {
+        let data = this.state.tempData;
         localStorage.setItem(_LOCAL_STORAGE_ITEM_NAME, JSON.stringify(data));
+        this.setState({ data });
+    }
+
+    addContact() {
+        let data = this.state.data;
+        data.push({
+            firstName: "",
+            lastName: "",
+            age: "",
+        });
+
         this.setState({ data });
     }
 
@@ -91,20 +108,41 @@ class App extends Component {
 
     render() {
         return (
-            <Paper>
-                <Table>
-                    <TableHeader displaySelectAll={false}>
-                        <TableRow>
-                            <TableHeaderColumn>Last Name</TableHeaderColumn>
-                            <TableHeaderColumn>First Name</TableHeaderColumn>
-                            <TableHeaderColumn>Age</TableHeaderColumn>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody displayRowCheckbox={false}>
-                        { this.renderTableRows() }
-                    </TableBody>
-                </Table>
-            </Paper>
+            <div>
+                <div className="header">
+                    Contact List
+                </div>
+                <Paper>
+                    <Table>
+                        <TableHeader displaySelectAll={false}>
+                            <TableRow>
+                                <TableHeaderColumn>Last Name</TableHeaderColumn>
+                                <TableHeaderColumn>First Name</TableHeaderColumn>
+                                <TableHeaderColumn>Age</TableHeaderColumn>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody displayRowCheckbox={false}>
+                            { this.renderTableRows() }
+                        </TableBody>
+                    </Table>
+                </Paper>
+
+                <div className="add-contact-button-wrapper">
+                    <span className="button">
+                        <RaisedButton
+                            label="+ Add Contact"
+                            primary={true}
+                            onClick={this.addContact}
+                        />
+                    </span>
+                    <span className="button">
+                        <RaisedButton
+                            label="Save"
+                            onClick={this.saveData}
+                        />
+                    </span>
+                </div>
+            </div>
         );
     }
 }

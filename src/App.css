@@ -1,0 +1,14 @@
+.header {
+  text-align: center;
+  font: 26px bold Roboto, sans-serif;
+  margin: 10px 0;
+}
+
+.add-contact-button-wrapper {
+  margin: 10px 0 0 auto;
+  text-align: right;
+}
+
+.button {
+  margin: 10px 10px 0 0;
+}
